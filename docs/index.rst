@@ -9,16 +9,14 @@
 .. |Tornado Web Server| image:: tornado.png
     :alt: Tornado Web Server
 
-`Tornado <http://www.tornadoweb.org>`_ 是一个Python web框架和异步网络库，最初由
- `FriendFeed<http://friendfeed.com>`_ 开发。 通过使用非阻塞网络I/O，Tornado 可以支持上万级的连接，
- 它适合构建 `长连接 <http://en.wikipedia.org/wiki/Push_technology#Long_polling>`_,
-`WebSockets <http://en.wikipedia.org/wiki/WebSocket>`_,
+`Tornado <http://www.tornadoweb.org>`_ 是一个Python web框架和异步网络库，最初由 `FriendFeed<http://friendfeed.com>`_ 开发。 通过使用非阻塞网络I/O，Tornado 可以支持上万级的连接，
+ 它适合构建 `长连接 <http://en.wikipedia.org/wiki/Push_technology#Long_polling>`_, `WebSockets <http://en.wikipedia.org/wiki/WebSocket>`_,
 和其他需要与每个用户保持长连接的应用。
 
 相关链接
 -----------
 
-* 当前版本: |version| (`PyPI下载 <https://pypi.python.org/pypi/tornado>`_, :doc:`release notes <releases>`)
+* 当前版本: |version| (`PyPI下载 <https://pypi.python.org/pypi/tornado>`_, :doc: `版本记录 <releases>`)
 * `源码 (github) <https://github.com/tornadoweb/tornado>`_
 * 邮件列表: `discussion <http://groups.google.com/group/python-tornado>`_ 和 `announcements <http://groups.google.com/group/python-tornado-announce>`_
 * `Stack Overflow <http://stackoverflow.com/questions/tagged/tornado>`_
@@ -58,8 +56,7 @@ Hello, world
 
 Tornado在 `PyPI列表中 <http://pypi.python.org/pypi/tornado>`_ ，可以使用
  ``pip`` 安装。 注意源码发布中包含的示例应用可能不会出现在这种方式安装
- 的代码中，所以你也可能希望通过下载一份源码的拷贝来进行安装 `git repository
-<https://github.com/tornadoweb/tornado>`_ 。
+ 的代码中，所以你也可能希望通过下载一份源码的拷贝来进行安装 `git repository <https://github.com/tornadoweb/tornado>`_ 。
 
 **安装提示**: Tornado 可以运行在 Python 2.7, and 3.4+
 对于Python 2, 2.7.9及更新的版本。 *强烈* 推荐提高对SSL的支持。
@@ -114,16 +111,12 @@ Tornado在 `PyPI列表中 <http://pypi.python.org/pypi/tornado>`_ ，可以使�
 讨论和支持
 ----------------------
 
-你可以在 `Tornado开发者邮件列表<http://groups.google.com/group/python-tornado>`_ 讨论Tornado， 
-并在 `GitHub issue tracker
-<https://github.com/tornadoweb/tornado/issues>`_ 报告bug.  
-其他资源可以在 `Tornado wiki
-<https://github.com/tornadoweb/tornado/wiki/Links>`_ 找到.  
+你可以在 `Tornado开发者邮件列表<http://groups.google.com/group/python-tornado>`_ 讨论Tornado，
+并在 `GitHub issue tracker <https://github.com/tornadoweb/tornado/issues>`_ 报告bug.
+其他资源可以在 `Tornado wiki <https://github.com/tornadoweb/tornado/wiki/Links>`_ 找到.
 先版本会在 `这个邮件列表<http://groups.google.com/group/python-tornado-announce>`_
 宣布发布。
 
-Tornado的开源许可是 `Apache License, Version 2.0
-<http://www.apache.org/licenses/LICENSE-2.0.html>`_.
+Tornado的开源许可是 `Apache License, Version 2.0 <http://www.apache.org/licenses/LICENSE-2.0.html>`_.
 
-这份文档的所有内容许可是 `Creative
-Commons 3.0 <http://creativecommons.org/licenses/by/3.0/>`_.
+这份文档的所有内容许可是 `Creative Commons 3.0 <http://creativecommons.org/licenses/by/3.0/>`_.
