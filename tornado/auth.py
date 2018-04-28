@@ -617,12 +617,11 @@ class OAuth2Mixin(object):
     @_auth_return_future
     def oauth2_request(self, url, callback, access_token=None,
                        post_args=None, **args):
-        """Fetches the given URL auth an OAuth2 access token.
+        """通过OAuth2 令牌向目标URL请求信息
 
-        If the request is a POST, ``post_args`` should be provided. Query
-        string arguments should be given as keyword arguments.
+        如果是一个POST请求, ``post_args`` 应该提供。查询字符串参数应该用关键字参数的方式提供。
 
-        Example usage:
+        例如:
 
         ..testcode::
 
@@ -671,10 +670,9 @@ class OAuth2Mixin(object):
         future.set_result(escape.json_decode(response.body))
 
     def get_auth_http_client(self):
-        """Returns the `.AsyncHTTPClient` instance to be used for auth requests.
+        """返回一个用于auth请求的 `.AsyncHTTPClient ` 实例。
 
-        May be overridden by subclasses to use an HTTP client other than
-        the default.
+        可能会被子类覆盖，以使用默认的HTTP客户端
 
         .. versionadded:: 4.3
         """
