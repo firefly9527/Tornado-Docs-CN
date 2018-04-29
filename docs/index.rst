@@ -9,9 +9,8 @@
 .. |Tornado Web Server| image:: tornado.png
     :alt: Tornado Web Server
 
-`Tornado <http://www.tornadoweb.org>`_ 是一个Python web框架和异步网络库，最初由 `FriendFeed<http://friendfeed.com>`_ 开发。 通过使用非阻塞网络I/O，Tornado 可以支持上万级的连接，
- 它适合构建 `长连接 <http://en.wikipedia.org/wiki/Push_technology#Long_polling>`_, `WebSockets <http://en.wikipedia.org/wiki/WebSocket>`_,
-和其他需要与每个用户保持长连接的应用。
+`Tornado <http://www.tornadoweb.org>`_ 是一个Python web框架和异步网络库，最初由 `FriendFeed <http://friendfeed.com>`_ 开发。 
+通过使用非阻塞网络I/O，Tornado 可以支持上万级的连接，它适合构建 `长连接 <http://en.wikipedia.org/wiki/Push_technology#Long_polling>`_ , `WebSockets <http://en.wikipedia.org/wiki/WebSocket>`_ ，和其他需要与每个用户保持长连接的应用。
 
 相关链接
 -----------
