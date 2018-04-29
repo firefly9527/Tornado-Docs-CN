@@ -30,33 +30,38 @@ Tornado中推荐通过 **协程** 的方式写异步代码.  协程使用了Pyth
 Python 3.5: ``async`` and ``await``
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
-Python 3.5 introduces the ``async`` and ``await`` keywords (functions
-using these keywords are also called "native coroutines"). Starting in
-Tornado 4.3, you can use them in place of most ``yield``-based
-coroutines (see the following paragraphs for limitations). Simply use
-``async def foo()`` in place of a function definition with the
-``@gen.coroutine`` decorator, and ``await`` in place of yield. The
-rest of this document still uses the ``yield`` style for compatibility
-with older versions of Python, but ``async`` and ``await`` will run
-faster when they are available::
+Python 3.5 引入了 ``async`` 和 ``await`` 关键字(使用这些关键字的函数也被称为”原生协程”)。
+从Tornado 4.3开始, 你可以用它们代替基于 yield 关键字的协程(请阅读以下相应的限制)。 
+只需要简单的使用 ``async def foo()`` 在函数定义的时候代替 ``@gen.coroutine`` 装饰器, 并且
+用 await 代替yield. 本文档的其他部分会继续使用 yield 的风格来和旧版本的Python兼容,
+但是如果 async 和 await 可用的话，它们运行起来会更快::
 
     async def fetch_coroutine(url):
         http_client = AsyncHTTPClient()
         response = await http_client.fetch(url)
         return response.body
 
-The ``await`` keyword is less versatile than the ``yield`` keyword.
-For example, in a ``yield``-based coroutine you can yield a list of
-``Futures``, while in a native coroutine you must wrap the list in
-`tornado.gen.multi`. This also eliminates the integration with
-`concurrent.futures`. You can use `tornado.gen.convert_yielded`
-to convert anything that would work with ``yield`` into a form that
-will work with ``await``::
+ ``await`` 关键字比 ``yield`` 关键字功能要少一些。
+ 例如,在一个基于 ``yield`` 的协程中， 你可以得到 ``Futures`` 列表， 
+ 但是在原生协程中，你必须把列表用 `tornado.gen.multi` 包起来，
+ 你也可以使用 `tornado.gen.convert_yielded` 来把任何使用 ``yield`` 工作
+ 的代码转换成使用 ``await`` 的形式::
 
     async def f():
         executor = concurrent.futures.ThreadPoolExecutor()
         await tornado.gen.convert_yielded(executor.submit(g))
 
+
+虽然原生协程没有明显依赖于特定框架(例如它们没有使用装饰器,
+例如 tornado.gen.coroutine 或 asyncio.coroutine),
+不是所有的协程都和其他的兼容。
+有一个 协程执行者(coroutine runner) 在第一个协程被调用的时候进行选择,
+然后被所有用 await 直接调用的协程共享。
+Tornado 的协程执行者(coroutine runner)在设计上是多用途的,
+可以接受任何来自其他框架的awaitable对象;
+其他的协程运行时可能有很多限制(例如, asyncio 协程执行者不接受来自其他框架的协程).
+基于这些原因,我们推荐组合了多个框架的应用都使用Tornado的协程执行者来进行协程调度.
+为了能使用Tornado来调度执行asyncio的协程, 可以使用 `tornado.platform.asyncio.to_asyncio_future` 适配器.
 While native coroutines are not visibly tied to a particular framework
 (i.e. they do not use a decorator like `tornado.gen.coroutine` or
 `asyncio.coroutine`), not all coroutines are compatible with each
