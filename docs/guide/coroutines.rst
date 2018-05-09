@@ -51,7 +51,6 @@ Python 3.5 引入了 ``async`` 和 ``await`` 关键字(使用这些关键字的�
         executor = concurrent.futures.ThreadPoolExecutor()
         await tornado.gen.convert_yielded(executor.submit(g))
 
-
 虽然原生协程没有明显依赖于特定框架(例如它们没有使用装饰器,
 例如 tornado.gen.coroutine 或 asyncio.coroutine),
 不是所有的协程都和其他的兼容。
@@ -62,32 +61,16 @@ Tornado 的协程执行者(coroutine runner)在设计上是多用途的,
 其他的协程运行时可能有很多限制(例如, asyncio 协程执行者不接受来自其他框架的协程).
 基于这些原因,我们推荐组合了多个框架的应用都使用Tornado的协程执行者来进行协程调度.
 为了能使用Tornado来调度执行asyncio的协程, 可以使用 `tornado.platform.asyncio.to_asyncio_future` 适配器.
-While native coroutines are not visibly tied to a particular framework
-(i.e. they do not use a decorator like `tornado.gen.coroutine` or
-`asyncio.coroutine`), not all coroutines are compatible with each
-other. There is a *coroutine runner* which is selected by the first
-coroutine to be called, and then shared by all coroutines which are
-called directly with ``await``. The Tornado coroutine runner is
-designed to be versatile and accept awaitable objects from any
-framework; other coroutine runners may be more limited (for example,
-the ``asyncio`` coroutine runner does not accept coroutines from other
-frameworks). For this reason, it is recommended to use the Tornado
-coroutine runner for any application which combines multiple
-frameworks. To call a coroutine using the Tornado runner from within a
-coroutine that is already using the asyncio runner, use the
-`tornado.platform.asyncio.to_asyncio_future` adapter.
 
 
-How it works
+它是如何工作的
 ~~~~~~~~~~~~
 
-A function containing ``yield`` is a **generator**.  All generators
-are asynchronous; when called they return a generator object instead
-of running to completion.  The ``@gen.coroutine`` decorator
-communicates with the generator via the ``yield`` expressions, and
-with the coroutine's caller by returning a `.Future`.
+一个函数包含了关键字 ``yield`` , 那么这个函数是一个生成器。所有的生成器都是异步的；
+当调用生成器的时候会返回一个生成器对象而不是该生成器执行的结果。使用 ``@gen.coroutine`` 装饰器
+装饰的生成器, 如此产生的协程的调用者能通过 ``yield`` 表达式和协程进行通信，并且调用者可以获得一个 `.Future` 与协程进行交互。
 
-Here is a simplified version of the coroutine decorator's inner loop::
+下面是一个协程装饰器内部循环的简单版本::
 
     # Simplified inner loop of tornado.gen.Runner
     def run(self):
@@ -99,36 +82,30 @@ Here is a simplified version of the coroutine decorator's inner loop::
             self.run()
         future.add_done_callback(callback)
 
-The decorator receives a `.Future` from the generator, waits (without
-blocking) for that `.Future` to complete, then "unwraps" the `.Future`
-and sends the result back into the generator as the result of the
-``yield`` expression.  Most asynchronous code never touches the `.Future`
-class directly except to immediately pass the `.Future` returned by
-an asynchronous function to a ``yield`` expression.
 
-How to call a coroutine
+装饰器从生成器接收一个 `.Future` 对象，等待(非阻塞)这个 `.Future` 对象执行完成，
+然后解开('unwrap')这个 `.Future` 对象，并把结果作为 `yield` 的结果传回给生成器器。
+大多数异步代码从来不会接触到 `.Future` 对象, 除非立即将由异步函数返回的`.Future`传递给 `yield` 表达式。
+
+如何调用协程
 ~~~~~~~~~~~~~~~~~~~~~~~
 
-Coroutines do not raise exceptions in the normal way: any exception
-they raise will be trapped in the `.Future` until it is yielded. This
-means it is important to call coroutines in the right way, or you may
-have errors that go unnoticed::
+协程一般不会抛异常: 任何异常都会被 `.Future` 捕获直到 `.Future` 传递给了
+`yield` 。这意味着正确地调用协程很重要，否则可能会无法得到错误信息::
 
     @gen.coroutine
     def divide(x, y):
         return x / y
 
     def bad_call():
-        # This should raise a ZeroDivisionError, but it won't because
-        # the coroutine is called incorrectly.
+        # 这里应该抛出一个ZeroDivisionError 异常, 但却没有
+        # 因为这里的协程调用方式是错的
         divide(1, 0)
 
-In nearly all cases, any function that calls a coroutine must be a
-coroutine itself, and use the ``yield`` keyword in the call. When you
-are overriding a method defined in a superclass, consult the
-documentation to see if coroutines are allowed (the documentation
-should say that the method "may be a coroutine" or "may return a
-`.Future`")::
+几乎所有情况下，任何函数想要调用协程必须自身也是协程，并且在调用的
+时候使用 ``yield`` 关键字.
+当你复写父类的方法，请看下文档，看是是否支持协程(文档里应该会有说这个
+方法"可能是协程或者返回一个 `.Future` ")::
 
     @gen.coroutine
     def good_call():
@@ -136,33 +113,30 @@ should say that the method "may be a coroutine" or "may return a
         # the exception.
         yield divide(1, 0)
 
-Sometimes you may want to "fire and forget" a coroutine without waiting
-for its result. In this case it is recommended to use `.IOLoop.spawn_callback`,
-which makes the `.IOLoop` responsible for the call. If it fails,
-the `.IOLoop` will log a stack trace::
+有时你可能想要只执行一个协程并不需要等待结果。在这种情况下，建议使用 `.IOLoop.spawn_callback`,
+它使用 `.IOLoop`  负责调用。 如果 它失败了, `.IOLoop` 会在日志中把调用栈记录下来::
 
-    # The IOLoop will catch the exception and print a stack trace in
-    # the logs. Note that this doesn't look like a normal call, since
-    # we pass the function object to be called by the IOLoop.
+    # IOLoop 将会捕获异常,并且在日志中打印栈记录.
+    # 注意这不像是一个正常的调用, 因为我们是通过
+    # IOLoop 调用的这个函数.
     IOLoop.current().spawn_callback(divide, 1, 0)
 
-Using `.IOLoop.spawn_callback` in this way is *recommended* for
-functions using ``@gen.coroutine``, but it is *required* for functions
-using ``async def`` (otherwise the coroutine runner will not start).
+使用 `.IOLoop.spawn_callback` 执行 ``@gen.coroutine`` 装饰的协程是 *推荐* 的方式，
+但对于使用 ``async def`` 的原生协程，这是 *必须的* (否则，协程不会启动)
 
-Finally, at the top level of a program, *if the IOLoop is not yet
-running,* you can start the `.IOLoop`, run the coroutine, and then
-stop the `.IOLoop` with the `.IOLoop.run_sync` method. This is often
-used to start the ``main`` function of a batch-oriented program::
+
+最后, 在程序顶层, 如果 `.IOLoop` 尚未运行, 你可以启动 `.IOLoop` ,
+执行协程, 然后使用 `.IOLoop.run_sync` 方法停止 `.IOLoop`
+这通常被 用来启动面向批处理程序的 ``main`` 函数::
 
     # run_sync() doesn't take arguments, so we must wrap the
     # call in a lambda.
     IOLoop.current().run_sync(lambda: divide(1, 0))
 
-Coroutine patterns
+协程模式
 ~~~~~~~~~~~~~~~~~~
 
-Interaction with callbacks
+结合callback
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 To interact with asynchronous code that uses callbacks instead of
@@ -268,10 +242,8 @@ from `Motor <https://motor.readthedocs.io/en/stable/>`_::
 
 Running in the background
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-
-`.PeriodicCallback` is not normally used with coroutines. Instead, a
-coroutine can contain a ``while True:`` loop and use
-`tornado.gen.sleep`::
+通常在协程中不使用 `.PeriodicCallback` 。事实上，一个协程使用 ``while True:`` 循环
+并使用 `tornado.gen.sleep`::
 
     @gen.coroutine
     def minute_loop():
@@ -283,6 +255,7 @@ coroutine can contain a ``while True:`` loop and use
     # spawn_callback().
     IOLoop.current().spawn_callback(minute_loop)
 
+有时候很多协程。例如，一个循环执行任何都超过60多毫秒 这个N是执行函数。
 Sometimes a more complicated loop may be desirable. For example, the
 previous loop runs every ``60+N`` seconds, where ``N`` is the running
 time of ``do_something()``. To run exactly every 60 seconds, use the
