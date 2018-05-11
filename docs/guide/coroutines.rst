@@ -139,9 +139,8 @@ Tornado 的协程执行者(coroutine runner)在设计上是多用途的,
 结合callback
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-To interact with asynchronous code that uses callbacks instead of
-`.Future`, wrap the call in a `.Task`.  This will add the callback
-argument for you and return a `.Future` which you can yield:
+为了使用回调而不是 Future 与异步代码进行交互,  用 `.Task` 把调被调用的函数包起来。
+这将会把一个函数添加为回调参数并返回一个可以yield的 `.Future` :
 
 .. testcode::
 
@@ -155,12 +154,11 @@ argument for you and return a `.Future` which you can yield:
 .. testoutput::
    :hide:
 
-Calling blocking functions
+调用阻塞函数
 ^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-The simplest way to call a blocking function from a coroutine is to
-use a `~concurrent.futures.ThreadPoolExecutor`, which returns
-``Futures`` that are compatible with coroutines::
+使用 `~concurrent.futures.ThreadPoolExecutor` 将一个阻塞函数变为可被协程调用的。
+它将返回和协程兼容的 ``Futures`` ::
 
     thread_pool = ThreadPoolExecutor(4)
 
@@ -168,11 +166,10 @@ use a `~concurrent.futures.ThreadPoolExecutor`, which returns
     def call_blocking():
         yield thread_pool.submit(blocking_func, args)
 
-Parallelism
+并行
 ^^^^^^^^^^^
 
-The coroutine decorator recognizes lists and dicts whose values are
-``Futures``, and waits for all of those ``Futures`` in parallel:
+协程装饰器能识别列表或者字典对象中的每个 ``Futures`` ，并且等待所有 ``Futures`` 并行执行完:
 
 .. testcode::
 
@@ -195,11 +192,10 @@ The coroutine decorator recognizes lists and dicts whose values are
 .. testoutput::
    :hide:
 
-Interleaving
+交叉存取
 ^^^^^^^^^^^^
 
-Sometimes it is useful to save a `.Future` instead of yielding it
-immediately, so you can start another operation before waiting:
+有时候保存一个 `.Future` 比立即yield它更有用, 所以你可以在等待之前 执行其他操作:
 
 .. testcode::
 
@@ -216,20 +212,16 @@ immediately, so you can start another operation before waiting:
 .. testoutput::
    :hide:
 
-This pattern is most usable with ``@gen.coroutine``. If
-``fetch_next_chunk()`` uses ``async def``, then it must be called as
-``fetch_future =
-tornado.gen.convert_yielded(self.fetch_next_chunk())`` to start the
-background processing.
+这种方式最好和 ``@gen.coroutine`` 一起使用。如果 ``fetch_next_chunk()`` 使用 ``async def`` 声明的,
+那么必须像这样调用 ``fetch_future = tornado.gen.convert_yielded(self.fetch_next_chunk())`` 才能启动
+后台执行进程。
 
-Looping
+循环
 ^^^^^^^
 
-Looping is tricky with coroutines since there is no way in Python
-to ``yield`` on every iteration of a ``for`` or ``while`` loop and
-capture the result of the yield.  Instead, you'll need to separate
-the loop condition from accessing the results, as in this example
-from `Motor <https://motor.readthedocs.io/en/stable/>`_::
+协程的循环协程是棘手的，因为在Python中没法在 ``for`` 或者 ``while`` 循环
+中 ``yield`` 迭代器并并捕获yield的结果。事实上，你需要将循环条件从访问结果中分离出来，
+下面是一个使用 `Motor <https://motor.readthedocs.io/en/stable/>`_ 的例子::
 
     import motor
     db = motor.MotorClient().test
@@ -240,7 +232,7 @@ from `Motor <https://motor.readthedocs.io/en/stable/>`_::
         while (yield cursor.fetch_next):
             doc = cursor.next_object()
 
-Running in the background
+在后台执行
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 通常在协程中不使用 `.PeriodicCallback` 。事实上，一个协程使用 ``while True:`` 循环
 并使用 `tornado.gen.sleep`::
@@ -255,11 +247,8 @@ Running in the background
     # spawn_callback().
     IOLoop.current().spawn_callback(minute_loop)
 
-有时候很多协程。例如，一个循环执行任何都超过60多毫秒 这个N是执行函数。
-Sometimes a more complicated loop may be desirable. For example, the
-previous loop runs every ``60+N`` seconds, where ``N`` is the running
-time of ``do_something()``. To run exactly every 60 seconds, use the
-interleaving pattern from above::
+有时候很多协程。例如，一个循环执行任何都超过60多毫秒 这个N是执行函数 ``do_something()`` 花费的时间。
+为了 准确的每60秒运行,使用上面的交叉模式::
 
     @gen.coroutine
     def minute_loop2():
