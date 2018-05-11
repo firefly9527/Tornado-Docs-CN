@@ -15,7 +15,7 @@
 相关链接
 -----------
 
-* 当前版本: |version| (`PyPI下载 <https://pypi.python.org/pypi/tornado>`_, :doc: `版本记录 <releases>`)
+* 当前版本: |version| (`PyPI下载 <https://pypi.python.org/pypi/tornado>`_, :doc:`版本记录 <releases>`)
 * `源码 (github) <https://github.com/tornadoweb/tornado>`_
 * 邮件列表: `discussion <http://groups.google.com/group/python-tornado>`_ 和 `announcements <http://groups.google.com/group/python-tornado-announce>`_
 * `Stack Overflow <http://stackoverflow.com/questions/tagged/tornado>`_
