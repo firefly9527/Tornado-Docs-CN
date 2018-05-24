@@ -182,20 +182,17 @@ Tornado 不会试图统一表单参数和其他输入类型的参数。特别是
 `sys.exc_info`, 所以 ``write_error`` 必须使用比如 `traceback.format_exception` 代替
 `traceback.format_exc`).
 
-It is also possible to generate an error page from regular handler
-methods instead of ``write_error`` by calling
-`~.RequestHandler.set_status`, writing a response, and returning.
-The special exception `tornado.web.Finish` may be raised to terminate
-the handler without calling ``write_error`` in situations where simply
-returning is not convenient.
+也可以在常规的处理方法中调用 `~.RequestHandler.set_status` 代替 ``write_error`` 生成一个response并返回。
+特殊的例外是 `tornado.web.Finish` 在直接返回不方便的情况下能够在不调用  ``write_error``
+前结束处理程序。
 
-For 404 errors, use the ``default_handler_class`` `Application setting
-<.Application.settings>`.  This handler should override
-`~.RequestHandler.prepare` instead of a more specific method like
-``get()`` so it works with any HTTP method.  It should produce its
-error page as described above: either by raising a ``HTTPError(404)``
-and overriding ``write_error``, or calling ``self.set_status(404)``
-and producing the response directly in ``prepare()``.
+对于404错误, 使用  ``default_handler_class`` `Application setting
+<.Application.settings>`.  这个处理程序会复写
+`~.RequestHandler.prepare` 而不是一个更具体的方法比如
+``get()`` 所以它可以在任何HTTP方法下工作。 它应该会产生如上所说的错误页面：
+要么抛出一个 ``HTTPError(404)``
+要么复写 ``write_error``, 或者调用 ``self.set_status(404)``
+或者在  ``prepare()`` 直接生成响应。
 
 Redirection
 ~~~~~~~~~~~
