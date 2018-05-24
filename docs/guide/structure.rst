@@ -156,42 +156,30 @@ Tornado 不会试图统一表单参数和其他输入类型的参数。特别是
 5. 当请求结束, `~.RequestHandler.on_finish()` 方法被调用。
 对于同步 处理程序会在 ``get()``(等)后立即返回; 对于异步处理程序,会在调用 `~.RequestHandler.finish()` 后返回.
 
-
-All methods designed to be overridden are noted as such in the
-`.RequestHandler` documentation.  Some of the most commonly
-overridden methods include:
+所有的方法都被设计为可以复写并记录在 `.RequestHandler` 的文档中。
+其中最常被复写的方法包括:
 
 - `~.RequestHandler.write_error` -
-  outputs HTML for use on error pages.
-- `~.RequestHandler.on_connection_close` - called when the client
-  disconnects; applications may choose to detect this case and halt
-  further processing.  Note that there is no guarantee that a closed
-  connection can be detected promptly.
-- `~.RequestHandler.get_current_user` - see :ref:`user-authentication`
-- `~.RequestHandler.get_user_locale` - returns `.Locale` object to use
-  for the current user
-- `~.RequestHandler.set_default_headers` - may be used to set
-  additional headers on the response (such as a custom ``Server``
-  header)
+  输出报告错误的HTML页面。
+- `~.RequestHandler.on_connection_close` - 当客户端断开连接时；应用可以检测这种情况，
+并中断后续处理。注意这不能保证当一个连接关闭时被及时发现。
+- `~.RequestHandler.get_current_user` - 参考 :ref:`user-authentication`
+- `~.RequestHandler.get_user_locale` - 返回 `.Locale` 对象给当前用户使用
+- `~.RequestHandler.set_default_headers` - 可以被用来给response响应设置额外的头部字段(例如自定义的 ``Server``
+  头部字段)
 
-Error Handling
+错误处理
 ~~~~~~~~~~~~~~
 
-If a handler raises an exception, Tornado will call
-`.RequestHandler.write_error` to generate an error page.
-`tornado.web.HTTPError` can be used to generate a specified status
-code; all other exceptions return a 500 status.
+如果一个处理器抛出异常，Tornado会调用 `.RequestHandler.write_error` 方法生成一个错误报告页。
+`tornado.web.HTTPError` 可以被用来生成一个指定的状态码；所有其他的异常都会返回一个500状态码。
 
-The default error page includes a stack trace in debug mode and a
-one-line description of the error (e.g. "500: Internal Server Error")
-otherwise.  To produce a custom error page, override
-`RequestHandler.write_error` (probably in a base class shared by all
-your handlers).  This method may produce output normally via
-methods such as `~RequestHandler.write` and `~RequestHandler.render`.
-If the error was caused by an exception, an ``exc_info`` triple will
-be passed as a keyword argument (note that this exception is not
-guaranteed to be the current exception in `sys.exc_info`, so
-``write_error`` must use e.g.  `traceback.format_exception` instead of
+默认的错误也包含一个debug模式下的调用堆和以及一行错误描述(例如 "500: Internal Server Error")。
+为了创建自定义的错误页面，可以复写 `RequestHandler.write_error`
+(可能在一个所有处理器的共有父类里)。 这个方法可能通过常用的方法产生输出，例如
+ `~RequestHandler.write` 和 `~RequestHandler.render`。
+如果错误是由异常引起的，``exc_info`` 将作为一个关键字参数传递(注意这个异常不能保证的是
+`sys.exc_info`, 所以 ``write_error`` 必须使用比如 `traceback.format_exception` 代替
 `traceback.format_exc`).
 
 It is also possible to generate an error page from regular handler
