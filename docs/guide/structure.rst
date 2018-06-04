@@ -223,26 +223,20 @@ Permanently`` ，更适合比如 SEO友好方法中把重定向到一个权威�
         ])
 
 不像  `.RequestHandler.redirect`, `.RedirectHandler` 默认使用永久重定向。这是
-因为路由表在运行时不会改变，而且被认为是永久的。 当在处理程序中发现重定向的时候，可能其他改变
-的逻辑的结果，用 `.RedirectHandler` 发送临时重定向, 将 `.RedirectHandler` 初始化参数这样设置
+因为路由表在运行时不会改变，所以被认为是永久的。 当在处理程序中发现重定向的时候，可能是其他处理逻辑想要的结果，用 `.RedirectHandler` 发送临时重定向, 需要将 `.RedirectHandler` 初始化参数这样设置
 ``permanent=False`` 。
 
-Asynchronous handlers
+异步处理
 ~~~~~~~~~~~~~~~~~~~~~
 
-Tornado handlers are synchronous by default: when the
-``get()``/``post()`` method returns, the request is considered
-finished and the response is sent.  Since all other requests are
-blocked while one handler is running, any long-running handler should
-be made asynchronous so it can call its slow operations in a
-non-blocking way.  This topic is covered in more detail in
-:doc:`async`; this section is about the particulars of
-asynchronous techniques in `.RequestHandler` subclasses.
+Tornado的处理器默认是同步的: 当
+``get()``/``post()`` 方法返回, 请求被视为结束并返回响应。当一个处理器在运行的时候其他所有
+请求都被阻塞， 任何长时间运行的处理器都应当是异步的，这样就可以通过非阻塞的方式执行较慢的操作。
+这个话题更详细的内容包含在 :doc:`async` ；这部分是关于在
+ `.RequestHandler` 子类中的异步技术的细节
 
-The simplest way to make a handler asynchronous is to use the
-`.coroutine` decorator.  This allows you to perform non-blocking I/O
-with the ``yield`` keyword, and no response will be sent until the
-coroutine has returned.  See :doc:`coroutines` for more details.
+使用 `.coroutine` 装饰器是让处理器异步执行的最简单方式。 这允许你使用 ``yield`` 关键字执行非阻塞I/O，并且直到协程返回才发送响应
+。查看 :doc:`coroutines` 了解更多细节。
 
 In some cases, coroutines may be less convenient than a
 callback-oriented style, in which case the `.tornado.web.asynchronous`
