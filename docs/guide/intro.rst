@@ -1,31 +1,20 @@
-Introduction
+介绍
 ------------
 
-`Tornado <http://www.tornadoweb.org>`_ is a Python web framework and
-asynchronous networking library, originally developed at `FriendFeed
-<https://en.wikipedia.org/wiki/FriendFeed>`_.  By using non-blocking network I/O, Tornado
-can scale to tens of thousands of open connections, making it ideal for
-`long polling <http://en.wikipedia.org/wiki/Push_technology#Long_polling>`_,
-`WebSockets <http://en.wikipedia.org/wiki/WebSocket>`_, and other
-applications that require a long-lived connection to each user.
+`Tornado <http://www.tornadoweb.org>`_  是一个Python web框架和异步网络库，最初由 `FriendFeed
+<https://en.wikipedia.org/wiki/FriendFeed>`_ 开发.  通过使用非阻塞网络I/OB， Tornado
+可以支持上万级的连接，它适合构建 `long polling <http://en.wikipedia.org/wiki/Push_technology#Long_polling>`_,
+`WebSockets <http://en.wikipedia.org/wiki/WebSocket>`_, 和其他需要与每个用户保持长连接的应用。
 
-Tornado can be roughly divided into four major components:
+Tornado 大体上可以被分为4个主要的部分:
 
-* A web framework (including `.RequestHandler` which is subclassed to
-  create web applications, and various supporting classes).
-* Client- and server-side implementions of HTTP (`.HTTPServer` and
-  `.AsyncHTTPClient`).
-* An asynchronous networking library including the classes `.IOLoop`
-  and `.IOStream`, which serve as the building blocks for the HTTP
-  components and can also be used to implement other protocols.
-* A coroutine library (`tornado.gen`) which allows asynchronous
-  code to be written in a more straightforward way than chaining
-  callbacks.
+* web框架 (包括用于创建web应用的 `.RequestHandler` 子类，以及很多其他支持的类)。
+* HTTP的客户端和服务端实现 (`.HTTPServer` 和
+  `.AsyncHTTPClient`)。
+* 异步网路库 (包括 `.IOLoop`
+  和 `.IOStream` 类) 为HTTP组件提供构建模块，也可以用来实现其他协议。
+* 协程库 (`tornado.gen`) 允许以更直接的方式编写异步代码，而不是链式回调的方式。
 
-The Tornado web framework and HTTP server together offer a full-stack
-alternative to `WSGI <http://www.python.org/dev/peps/pep-3333/>`_.
-While it is possible to use the Tornado web framework in a WSGI
-container (`.WSGIAdapter`), or use the Tornado HTTP server as a
-container for other WSGI frameworks (`.WSGIContainer`), each of these
-combinations has limitations and to take full advantage of Tornado you
-will need to use the Tornado's web framework and HTTP server together.
+Tornado web 框架和HTTP 服务器一起为 `WSGI <http://www.python.org/dev/peps/pep-3333/>`_
+提供了一个全栈式的选择。在WSGI容器中使用Tornado web框架 (`.WSGIAdapter`) 或者使用Tornado HTTP server作为一个其他WSGI框架
+的容器 (`.WSGIContainer`)，这样的组合方式都是有局限性的；为了充分利用Tornado的特性,你需要一起使用Tornado的web框架和HTTP server。
